@@ -1,9 +1,11 @@
 var userFormEl = document.querySelector("#user-form");
 var nameInputEl = document.querySelector("#username");
+var searchInputEl = document.querySelector("#langSearch");
 var repoContainerEl = document.querySelector("#repos-container");
 var repoSearchTerm = document.querySelector("#repo-search-term");
 var languageButtonsEl = document.querySelector("#language-buttons");
-
+var languageSearchEl = document.querySelector("#language-search");
+// --------------------- Handlers ---------------------
 var formSubmitHandler = function(event) {
   event.preventDefault();
   // get value from input element
@@ -17,6 +19,30 @@ var formSubmitHandler = function(event) {
   }
 };
 
+var buttonClickHandler = function (event) {
+  var language = event.target.getAttribute("data-language");
+  if (language) {
+    getFeaturedRepos(language);
+  
+    // clear old content
+    repoContainerEl.textContent = "";
+  }
+};
+
+var searchSubmitHandler = function(event) {
+  event.preventDefault();
+  // get value from input element
+  var language = searchInputEl.value.trim();
+  console.log(language);
+  if (language) {
+    getFeaturedRepos(language);
+    searchInputEl.value = "";
+  } else {
+    alert("Please enter a valid language");
+  }
+};
+
+// --------------------- Getters ---------------------
 var getUserRepos = function(user) {
   // format the github api url
   var apiUrl = "https://api.github.com/users/" + user + "/repos";
@@ -53,16 +79,7 @@ var getFeaturedRepos = function(language) {
   });
 }
 
-var buttonClickHandler = function (event) {
-  var language = event.target.getAttribute("data-language");
-  if (language) {
-    getFeaturedRepos(language);
-  
-    // clear old content
-    repoContainerEl.textContent = "";
-  }
-};
-
+// --------------------- Display ---------------------
 var displayRepos = function(repos, searchTerm) {
   // check if api returned any repos
   if (repos.length === 0) {
@@ -111,5 +128,7 @@ var displayRepos = function(repos, searchTerm) {
   }
 };
 
+// --------------------- Event Listeners ---------------------
 userFormEl.addEventListener("submit", formSubmitHandler);
 languageButtonsEl.addEventListener("click", buttonClickHandler);
+languageSearchEl.addEventListener("click", searchSubmitHandler);
